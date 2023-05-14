@@ -24,12 +24,10 @@ let yearActual = date.getFullYear();
 let resultLock = false;
 
 submit.addEventListener("click", function () {
+  validation();
   if (resultLock == false) {
-    validation();
     calculate();
   }
-  resultLock = true;
-  console.log(resultLock);
 });
 
 function calculate() {
@@ -203,6 +201,5 @@ function animation(yearCalc, monthCalc, dayCalc) {
         clearInterval(dayInterval);
       }
     }, 50);
-    resultLock = false;
   }
 }
