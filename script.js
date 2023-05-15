@@ -16,35 +16,26 @@ const labelDay = document.querySelector(".labelDay");
 const labelMonth = document.querySelector(".labelMonth");
 const labelYear = document.querySelector(".labelYear");
 
-let selectedDay;
-let selectedMonth;
-let selectedYear;
-
 const date = new Date();
 let dayActual = date.getDate();
 let monthActual = date.getMonth() + 1;
 let yearActual = date.getFullYear();
 
-let resultLock = false;
-
 submit.addEventListener("click", function () {
-  selectedDay = inputDay.value;
-  selectedMonth = inputMonth.value;
-  selectedYear = inputYear.value;
-  validation();
-  if (resultLock == false) {
-    calculate();
-  }
+  let dayLock = checkDay(inputDay.value);
+  let monthLock = checkMonth(inputMonth.value);
+  let yearLock = checkYear(inputYear.value);
+  if (dayLock == false && monthLock == false && yearLock == false) calculate();
 });
 
 function calculate() {
-  let yearCalc = yearActual - selectedYear - 1;
-  let monthCalc = 11 - selectedMonth + monthActual;
+  let yearCalc = yearActual - inputYear.value - 1;
+  let monthCalc = 11 - inputMonth.value + monthActual;
   if (monthCalc >= 12) {
     monthCalc -= 12;
     yearCalc++;
   }
-  let dayCalc = 31 - selectedDay + dayActual;
+  let dayCalc = 31 - inputDay.value + dayActual;
   if (dayCalc >= 31) {
     dayCalc -= 31;
     monthCalc++;
@@ -56,104 +47,82 @@ function leapYearCheck(year) {
   return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
 }
 
-function validation() {
-  let dayLock;
-  let monthLock;
-  let yearLock;
-  let daysExcess = 0;
-  let leapYear = leapYearCheck(selectedYear);
-
-  if (
-    selectedMonth == 4 ||
-    selectedMonth == 6 ||
-    selectedMonth == 9 ||
-    inputMonth == 11
-  ) {
-    daysExcess = 1;
-  } else if (selectedMonth == 2) {
-    if (leapYear == false) daysExcess = 3;
-    else daysExcess = 2;
+function daysExcess(month) {
+  let leapYear = leapYearCheck(inputYear.value);
+  if (month == 4 || month == 6 || month == 9 || inputMonth == 11) {
+    return 1; // 30 days
+  } else if (month == 2) {
+    if (leapYear == false) return 3; // 28 days
+    else return 2; // 29 days
   } else {
-    daysExcess = 0;
+    return 0; // 31 days
   }
+}
 
-  // check days
-  if (selectedDay == "") {
+function checkDay(day) {
+  let excess = daysExcess(inputMonth.value);
+  if (day == "") {
     dayError.style.visibility = "visible";
     dayError.innerHTML = "This field is required";
     inputDay.style.border = "1px solid var(--Light-red)";
     labelDay.style.color = "var(--Light-red)";
-    dayLock = true;
-  } else if (
-    selectedDay > 31 - daysExcess ||
-    selectedDay < 1 ||
-    isNaN(selectedDay) == true
-  ) {
+    return true;
+  } else if (day > 31 - excess || day < 1 || isNaN(day) == true) {
     inputDay.style.border = "1px solid var(--Light-red)";
     labelDay.style.color = "var(--Light-red)";
     dayError.style.visibility = "visible";
     dayError.innerHTML = "Must be a valid day";
-    dayLock = true;
+    return true;
   } else {
     dayError.style.visibility = "hidden";
     inputDay.style.color = "var(--Off-black)";
     inputDay.style.border = "1px solid var(--Purple)";
     labelDay.style.color = "var(--Smokey-grey)";
-    dayLock = false;
+    return false;
   }
-  // check months
-  if (selectedMonth == "") {
+}
+
+function checkMonth(month) {
+  if (month == "") {
     monthError.style.visibility = "visible";
     monthError.innerHTML = "This field is required";
     inputMonth.style.border = "1px solid var(--Light-red)";
     labelMonth.style.color = "var(--Light-red)";
-    monthLock = true;
-  } else if (
-    selectedMonth > 12 ||
-    selectedMonth < 1 ||
-    isNaN(selectedMonth) == true
-  ) {
+    return true;
+  } else if (month > 12 || month < 1 || isNaN(month) == true) {
     inputMonth.style.border = "1px solid var(--Light-red)";
     labelMonth.style.color = "var(--Light-red)";
     monthError.style.visibility = "visible";
     monthError.innerHTML = "Must be a valid month";
-    monthLock = true;
+    return true;
   } else {
     monthError.style.visibility = "hidden";
     inputMonth.style.color = "var(--Off-black)";
     inputMonth.style.border = "1px solid var(--Purple)";
     labelMonth.style.color = "var(--Smokey-grey)";
-    monthLock = false;
+    return false;
   }
-  // check years
-  if (selectedYear == "") {
+}
+
+function checkYear(year) {
+  if (year == "") {
     yearError.style.visibility = "visible";
     yearError.innerHTML = "This field is required";
     inputYear.style.border = "1px solid var(--Light-red)";
     labelYear.style.color = "var(--Light-red)";
-    yearLock = true;
-  } else if (
-    selectedYear > yearActual ||
-    selectedYear < 1 ||
-    isNaN(selectedYear) == true
-  ) {
+    return true;
+  } else if (year > yearActual || year < 1 || isNaN(year) == true) {
     inputYear.style.border = "1px solid var(--Light-red)";
     labelYear.style.color = "var(--Light-red)";
     yearError.style.visibility = "visible";
-    yearError.innerHTML = "Must be a valid year";
-    yearLock = true;
+    yearError.innerHTML = "Must be in the past";
+    return true;
   } else {
     yearError.style.visibility = "hidden";
     inputYear.style.color = "var(--Off-black)";
     inputYear.style.border = "1px solid var(--Purple)";
     labelYear.style.color = "var(--Smokey-grey)";
-    yearLock = false;
-  }
-
-  if (dayLock == false && monthLock == false && yearLock == false) {
-    resultLock = false;
-  } else {
-    resultLock = true;
+    return false;
   }
 }
 
@@ -198,7 +167,7 @@ function animation(yearCalc, monthCalc, dayCalc) {
         clearInterval(monthInterval);
         dayAnimation();
       }
-    }, 50);
+    }, 100);
   }
 
   function dayAnimation() {
@@ -214,6 +183,6 @@ function animation(yearCalc, monthCalc, dayCalc) {
       if (dayCounter > dayCalc) {
         clearInterval(dayInterval);
       }
-    }, 50);
+    }, 80);
   }
 }
