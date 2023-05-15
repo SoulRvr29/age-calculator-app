@@ -21,11 +21,21 @@ let dayActual = date.getDate();
 let monthActual = date.getMonth() + 1;
 let yearActual = date.getFullYear();
 
+let submitLock = false;
+
 submit.addEventListener("click", function () {
   let dayLock = checkDay(inputDay.value);
   let monthLock = checkMonth(inputMonth.value);
   let yearLock = checkYear(inputYear.value);
-  if (dayLock == false && monthLock == false && yearLock == false) calculate();
+  if (
+    dayLock == false &&
+    monthLock == false &&
+    yearLock == false &&
+    submitLock == false
+  ) {
+    submitLock = true;
+    calculate();
+  }
 });
 
 function calculate() {
@@ -182,6 +192,7 @@ function animation(yearCalc, monthCalc, dayCalc) {
       dayCounter++;
       if (dayCounter > dayCalc) {
         clearInterval(dayInterval);
+        submitLock = false;
       }
     }, 80);
   }
