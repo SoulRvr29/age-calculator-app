@@ -66,10 +66,8 @@ h1 {
   font-weight: 800;
   margin-left: min(20vw, 9rem);
 }
-.mainConteiner {
-  width: min(90vw, 52.5rem);
-}
 main {
+  width: min(90vw, 52.5rem);
   position: relative;
   background-color: var(--White);
   border-radius: 1rem 1rem 12rem 1rem;
@@ -149,7 +147,6 @@ input[type="text"]:focus {
 
 /*****  FOOTER  *****/
 footer {
-  width: 80%;
   margin-top: 2rem;
   font-size: 11px;
   text-align: center;
@@ -187,8 +184,6 @@ footer a:hover {
   main {
     top: -3rem;
     padding: 3.5rem 1.5rem;
-  }
-  .mainConteiner {
     width: min(90vw, 40rem);
   }
   .error {
@@ -219,8 +214,6 @@ footer a:hover {
   main {
     top: -3rem;
     padding: 3.5rem 1.5rem;
-  }
-  .mainConteiner {
     width: min(90vw, 40rem);
   }
   .error {
@@ -234,5 +227,13 @@ footer a:hover {
   }
   label {
     font-size: 0.6rem;
+  }
+  main {
+    padding: 1.5rem 0.5rem;
+    width: 100vw;
+  }
+  .arrow {
+    top: 10.6rem;
+    right: 40%;
   }
 }

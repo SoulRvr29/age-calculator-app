@@ -16,6 +16,10 @@ const labelDay = document.querySelector(".labelDay");
 const labelMonth = document.querySelector(".labelMonth");
 const labelYear = document.querySelector(".labelYear");
 
+let selectedDay;
+let selectedMonth;
+let selectedYear;
+
 const date = new Date();
 let dayActual = date.getDate();
 let monthActual = date.getMonth() + 1;
@@ -24,6 +28,9 @@ let yearActual = date.getFullYear();
 let resultLock = false;
 
 submit.addEventListener("click", function () {
+  selectedDay = inputDay.value;
+  selectedMonth = inputMonth.value;
+  selectedYear = inputYear.value;
   validation();
   if (resultLock == false) {
     calculate();
@@ -31,13 +38,13 @@ submit.addEventListener("click", function () {
 });
 
 function calculate() {
-  let yearCalc = yearActual - inputYear.value - 1;
-  let monthCalc = 11 - inputMonth.value + monthActual;
+  let yearCalc = yearActual - selectedYear - 1;
+  let monthCalc = 11 - selectedMonth + monthActual;
   if (monthCalc >= 12) {
     monthCalc -= 12;
     yearCalc++;
   }
-  let dayCalc = 31 - inputDay.value + dayActual;
+  let dayCalc = 31 - selectedDay + dayActual;
   if (dayCalc >= 31) {
     dayCalc -= 31;
     monthCalc++;
@@ -45,36 +52,42 @@ function calculate() {
   animation(yearCalc, monthCalc, dayCalc);
 }
 
+function leapYearCheck(year) {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
 function validation() {
   let dayLock;
   let monthLock;
   let yearLock;
   let daysExcess = 0;
+  let leapYear = leapYearCheck(selectedYear);
 
   if (
-    inputMonth.value == 4 ||
-    inputMonth.value == 6 ||
-    inputMonth.value == 9 ||
+    selectedMonth == 4 ||
+    selectedMonth == 6 ||
+    selectedMonth == 9 ||
     inputMonth == 11
   ) {
     daysExcess = 1;
-  } else if (inputMonth.value == 2) {
-    daysExcess = 3;
+  } else if (selectedMonth == 2) {
+    if (leapYear == false) daysExcess = 3;
+    else daysExcess = 2;
   } else {
     daysExcess = 0;
   }
 
   // check days
-  if (inputDay.value == "") {
+  if (selectedDay == "") {
     dayError.style.visibility = "visible";
     dayError.innerHTML = "This field is required";
     inputDay.style.border = "1px solid var(--Light-red)";
     labelDay.style.color = "var(--Light-red)";
     dayLock = true;
   } else if (
-    inputDay.value > 31 - daysExcess ||
-    inputDay.value < 1 ||
-    isNaN(inputDay.value) == true
+    selectedDay > 31 - daysExcess ||
+    selectedDay < 1 ||
+    isNaN(selectedDay) == true
   ) {
     inputDay.style.border = "1px solid var(--Light-red)";
     labelDay.style.color = "var(--Light-red)";
@@ -89,16 +102,16 @@ function validation() {
     dayLock = false;
   }
   // check months
-  if (inputMonth.value == "") {
+  if (selectedMonth == "") {
     monthError.style.visibility = "visible";
     monthError.innerHTML = "This field is required";
     inputMonth.style.border = "1px solid var(--Light-red)";
     labelMonth.style.color = "var(--Light-red)";
     monthLock = true;
   } else if (
-    inputMonth.value > 12 ||
-    inputMonth.value < 1 ||
-    isNaN(inputMonth.value) == true
+    selectedMonth > 12 ||
+    selectedMonth < 1 ||
+    isNaN(selectedMonth) == true
   ) {
     inputMonth.style.border = "1px solid var(--Light-red)";
     labelMonth.style.color = "var(--Light-red)";
@@ -113,16 +126,16 @@ function validation() {
     monthLock = false;
   }
   // check years
-  if (inputYear.value == "") {
+  if (selectedYear == "") {
     yearError.style.visibility = "visible";
     yearError.innerHTML = "This field is required";
     inputYear.style.border = "1px solid var(--Light-red)";
     labelYear.style.color = "var(--Light-red)";
     yearLock = true;
   } else if (
-    inputYear.value > yearActual ||
-    inputYear.value < 1 ||
-    isNaN(inputYear.value) == true
+    selectedYear > yearActual ||
+    selectedYear < 1 ||
+    isNaN(selectedYear) == true
   ) {
     inputYear.style.border = "1px solid var(--Light-red)";
     labelYear.style.color = "var(--Light-red)";
@@ -156,11 +169,12 @@ function animation(yearCalc, monthCalc, dayCalc) {
     if (yearCalc < 10) {
       resultYears.innerHTML = "";
       resultYears.style.marginLeft = "min(8vw, 2rem)";
-    } else {
+    }
+    if (yearCalc > 9 && yearCalc < 100) {
       resultYears.style.marginLeft = "0";
     }
     if (yearCalc > 99) {
-      resultYears.style.left = "min(2vw, 1rem)";
+      resultYears.style.marginLeft = "min(-1vw, -1rem)";
     }
     resultYears.innerHTML = yearCounter;
     yearCounter++;
